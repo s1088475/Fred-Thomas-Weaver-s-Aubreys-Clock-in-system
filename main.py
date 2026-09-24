@@ -42,13 +42,26 @@ foods = {
     'serial cabernet sauvignon': {'price': 10.00, 'in_stock': True}
 }
 
-# orders = []
+def take_order():
+    orders = []
 
-# orders.append(foods['conundrum red blend'])
-# orders.append(foods['mer soleil silver chardonnay'])
+    print("Enter foods to order. Type 'done' when finished.")
 
-# print(orders)
+    while True:
+        food_name = input("Food: ").strip().lower()
+        if food_name == "done":
+            break
+        elif food_name not in foods:
+            print("That item is not on the menu.")
+            continue
+        elif not foods[food_name]['in_stock']:
+            print("That item is currently out of stock.")
+            continue
+        orders.append(food_name)
+        print(f"Added {food_name} to the order.")
+    return orders
 
-# bill = {'paid': False, 'food_ordered': orders}
-
-# print(bill)
+orders = take_order()
+print("\nFoods ordered:")
+for order in orders:
+    print(f"- {order}")
