@@ -42,21 +42,55 @@ foods = {
     'serial cabernet sauvignon': {'price': 10.00, 'in_stock': True}
 }
 
+def show_orders(orders):
+    if not orders:
+        print("No items ordered.")
+        return
+
+    print("\nCurrent order:")
+    for number, item in enumerate(orders, start=1):
+        print(f"{number}. {item} - ${foods[item]['price']:.2f}")
+
+
 def take_order(table_number, orders):
-    print(f"Enter foods for Table {table_number}. Type 'done' when finished.")
+    print(f"Enter foods for Table {table_number}.")
+    print("Type 'show' to view items, 'delete' to remove an item, or 'done' when finished.")
 
     while True:
         food_name = input("Food: ").strip().lower()
+
         if food_name == "done":
             break
-        elif food_name not in foods:
+
+        if food_name == "show":
+            show_orders(orders)
+            continue
+
+        if food_name == "delete":
+            show_orders(orders)
+            if orders:
+                try:
+                    item_number = int(input("Enter item number to delete: "))
+                    if 1 <= item_number <= len(orders):
+                        removed_item = orders.pop(item_number - 1)
+                        print(f"Deleted {removed_item}.")
+                    else:
+                        print("Invalid item number.")
+                except ValueError:
+                    print("Please enter a valid number.")
+            continue
+
+        if food_name not in foods:
             print("That item is not on the menu.")
             continue
-        elif not foods[food_name]['in_stock']:
+
+        if not foods[food_name]['in_stock']:
             print("That item is currently out of stock.")
             continue
+
         orders.append(food_name)
         print(f"Added {food_name} to the order.")
+
     return orders
 
 
