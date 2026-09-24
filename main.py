@@ -42,10 +42,8 @@ foods = {
     'serial cabernet sauvignon': {'price': 10.00, 'in_stock': True}
 }
 
-def take_order():
-    orders = []
-
-    print("Enter foods to order. Type 'done' when finished.")
+def take_order(table_number, orders):
+    print(f"Enter foods for Table {table_number}. Type 'done' when finished.")
 
     while True:
         food_name = input("Food: ").strip().lower()
@@ -61,7 +59,26 @@ def take_order():
         print(f"Added {food_name} to the order.")
     return orders
 
-orders = take_order()
-print("\nFoods ordered:")
-for order in orders:
-    print(f"- {order}")
+
+if __name__ == "__main__":
+    table_orders = {}
+
+    print("Enter a table number, or type 'quit' when finished.")
+
+    while True:
+        table_input = input("Table: ").strip().lower()
+
+        if table_input == "quit":
+            break
+
+        if not table_input.isdigit() or int(table_input) < 1:
+            print("Please enter a valid table number.")
+            continue
+
+        table_number = int(table_input)
+        table_orders.setdefault(table_number, [])
+        take_order(table_number, table_orders[table_number])
+
+    print("\nAll table orders:")
+    for table_number, orders in sorted(table_orders.items()):
+        print(f"Table {table_number}: {orders}")
