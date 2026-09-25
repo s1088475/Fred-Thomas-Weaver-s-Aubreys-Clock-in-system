@@ -42,6 +42,10 @@ foods = {
     'serial cabernet sauvignon': {'price': 10.00, 'in_stock': True}
 }
 
+def calculate_total(orders):
+    return sum(foods[item]['price'] for item in orders)
+
+
 def show_orders(orders):
     if not orders:
         print("No items ordered.")
@@ -50,6 +54,7 @@ def show_orders(orders):
     print("\nCurrent order:")
     for number, item in enumerate(orders, start=1):
         print(f"{number}. {item} - ${foods[item]['price']:.2f}")
+    print(f"Total: ${calculate_total(orders):.2f}")
 
 
 def take_order(table_number, orders):
@@ -94,25 +99,75 @@ def take_order(table_number, orders):
     return orders
 
 
-if __name__ == "__main__":
-    table_orders = {}
-
-    print("Enter a table number, or type 'quit' when finished.")
-
-    while True:
-        table_input = input("Table: ").strip().lower()
-
-        if table_input == "quit":
-            break
-
-        if not table_input.isdigit() or int(table_input) < 1:
-            print("Please enter a valid table number.")
-            continue
-
-        table_number = int(table_input)
-        table_orders.setdefault(table_number, [])
-        take_order(table_number, table_orders[table_number])
+def show_all_orders(table_orders):
+    if not table_orders:
+        print("No table orders yet.")
+        return
 
     print("\nAll table orders:")
     for table_number, orders in sorted(table_orders.items()):
-        print(f"Table {table_number}: {orders}")
+        print(f"Table {table_number}: {orders} - Total: ${calculate_total(orders):.2f}")
+
+
+def show_status(table_orders):
+    if not table_orders:
+        print("No tables are currently open.")
+        return
+
+    print("\nTable status:")
+    for table_number, orders in sorted(table_orders.items()):
+        status = "Open" if orders else "Empty"
+        print(
+            f"Table {table_number}: {status} - "
+            f"{len(orders)} item(s) - ${calculate_total(orders):.2f}"
+        )
+
+
+def get_table_number():
+    table_input = input("Table number: ").strip()
+    if not table_input.isdigit() or int(table_input) < 1:
+        print("Please enter a valid table number.")
+        return None
+    return int(table_input)
+
+
+if __name__ == "__main__":
+    table_orders = {}
+
+    while True:
+        print("\n=== Aubrey's Order Taking System ===")
+        print("1. New Order")
+        print("2. View Orders")
+        print("3. Update Order")
+        print("4. Status")
+        print("5. Quit")
+
+        choice = input("Choose an option: ").strip().lower()
+
+        if choice in {"5", "quit", "q"}:
+            break
+
+        if choice == "1":
+            table_number = get_table_number()
+            if table_number is None:
+                continue
+            table_orders.setdefault(table_number, [])
+            take_order(table_number, table_orders[table_number])
+        elif choice == "2":
+            show_all_orders(table_orders)
+        elif choice == "3":
+            table_number = get_table_number()
+            if table_number is None:
+                continue
+            if table_number not in table_orders:
+                print("That table does not have an order yet.")
+                continue
+            take_order(table_number, table_orders[table_number])
+        elif choice == "4":
+            show_status(table_orders)
+        else:
+            print("Please choose an option from 1 to 5.")
+
+    if table_orders:
+        print()
+        show_all_orders(table_orders)
